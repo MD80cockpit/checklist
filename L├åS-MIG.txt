@@ -1,0 +1,51 @@
+MD-80 NORMAL CHECKLIST - APP
+
+INDHOLD I DENNE MAPPE
+----------------------
+index.html, manifest.json, sw.js, icon-180.png, icon-192.png, icon-512.png
+Filerne skal ligge sammen i samme mappe.
+
+PC / MAC / ANDROID (enkel brug)
+--------------------------------
+Åbn index.html direkte i Chrome/Edge/Safari. Ingen internet nødvendigt.
+
+IPAD / IPHONE - VIGTIGT
+------------------------
+Åbner du index.html direkte fra Filer-appen, vises den kun som en
+forhåndsvisning. Her virker filvælgeren (import af .json) og lagring af data
+IKKE pålideligt. Løsningen er at lægge appen online og åbne den i Safari:
+
+1. Læg ALLE filerne i denne mappe online. Gratis muligheder:
+   - Netlify Drop: gå til app.netlify.com/drop og træk hele mappen ind.
+     Opret evt. en gratis konto, så adressen bliver liggende.
+   - GitHub Pages: opret et repository, upload filerne, og slå Pages til
+     under Settings -> Pages (branch: main, mappe: root).
+   OBS: siden bliver tilgængelig for alle, der kender adressen, og den
+   indeholder checklistens tekst.
+2. Åbn adressen i Safari på iPad'en (ikke i Filer-appen).
+3. Tryk på Del-ikonet -> "Føj til hjemmeskærm". Åbn derefter appen fra
+   ikonet på hjemmeskærmen.
+4. Åbn appen med internet første gang, så den gemmer sig selv til offline
+   brug. Test: slå flytilstand til og åbn appen fra ikonet.
+5. Nye versioner dukker op efter 1-2 genstarter af appen. Tjek "App version"
+   nederst på startskærmen.
+
+FLYT DATA (CHECKLISTER, LEG, AFKRYDSNINGER) TIL EN NY ENHED
+-----------------------------------------------------------
+Data ligger lokalt i browseren på hver enhed og flytter ikke af sig selv.
+1. På enheden hvor data ligger nu: tryk "Save all (full backup)".
+   Der downloades en .json-fil (fx md80-backup-2026-11-07T12-30.json).
+2. Send filen til den nye enhed (AirDrop, iCloud Drive, mail, USB).
+3. På den nye enhed: åbn appen, og tryk "Import checklist or backup from
+   file" på startskærmen. Tryk "Gennemse" i vælgeren og find filen
+   (iPad: Downloads eller iCloud Drive).
+4. På iPad: gør importen i appen FRA HJEMMESKÆRMS-IKONET. Data i en
+   Safari-fane og i hjemmeskærms-appen er adskilt.
+
+DATA KAN FORSVINDE
+------------------
+Rydder du "cookies og websteddata"/browserdata, eller nulstiller enheden,
+forsvinder data. Appen viser en advarsel på startskærmen, hvis du ikke har
+lavet backup for nylig. Gem gerne backup-filen et sikkert sted.
+
+iPad: downloadede filer ligger i Filer-appen under Downloads.

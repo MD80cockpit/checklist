@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MD-80 Normal Checklist</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#1e3a5f" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="MD-80" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<style>
+  :root {
+    --green: #bbf7d0;
+    --green-border: #22c55e;
+    --yellow: #fde68a;
+    --yellow-border: #d97706;
+  }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    padding: 1.5rem;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  h1 { text-align: center; margin-bottom: 0.25rem; }
+  h2 { text-align: center; }
+  .subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  .legend {
+    background: #fff;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 6px rgba(0,0,0,0.08);
+  }
+  .legend b { color: #b45309; }
+  .edit-banner {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    color: #92400e;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .toolbar button:hover { background: #f5f5f5; }
+  #edit-toggle.active {
+    background: #fbbf24;
+    border-color: #d97706;
+    font-weight: bold;
+  }
+  .progress {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 1rem;
+  }
+  details {
+    margin-bottom: 0.85rem;
+    background: #fff;
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  }
+  summary {
+    font-weight: bold;
+    font-size: 1.05rem;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-title {
+    transition: color 0.2s ease;
+  }
+  .section-title.incomplete {
+    color: #b91c1c;
+  }
+  .section-title.complete {
+    color: #16a34a;
+  }
+  .section-title.warning {
+    color: #b45309;
+  }
+  .summary-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-count {
+    font-weight: normal;
+    font-size: 0.75rem;
+    color: #999;
+  }
+  .reset-section {
+    font-size: 0.72rem;
+    font-weight: normal;
+    color: #888;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.15rem 0.5rem;
+    background: #fff;
+    cursor: pointer;
+  }
+  .reset-section:hover { background: #f5f5f5; }
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    margin: 0.4rem 0;
+  }
+  .status-box {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    margin-right: 0.75rem;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    user-select: none;
+    background: #fff;
+    font-size: 1.05rem;
+  }
+  .status-box:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+  .status-box[data-state="green"] {
+    background: var(--green);
+    border-color: var(--green-border);
+  }
+  .status-box[data-state="yellow"] {
+    background: var(--yellow);
+    border-color: var(--yellow-border);
+  }
+  .item-text {
+    flex: 1;
+    padding: 0.15rem;
+    border-radius: 4px;
+    font-size: 0.92rem;
+  }
+  .item-text.editable {
+    border: 1px dashed #93c5fd;
+    background: #f8fafc;
+  }
+  #app-title.editable, #app-subtitle.editable {
+    border: 1px dashed #93c5fd;
+    background: #f8fafc;
+    border-radius: 4px;
+  }
+  .item-text:focus-visible {
+    outline: 2px solid #2563eb;
+  }
+  .transit-mark {
+    color: #b45309;
+    font-weight: bold;
+    margin-right: 0.3rem;
+  }
+  .crew-tag {
+    font-size: 0.7rem;
+    color: #666;
+    background: #eee;
+    border-radius: 4px;
+    padding: 0.1rem 0.4rem;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+  }
+  .transit-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.68rem;
+    color: #666;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .transit-label input {
+    margin-right: 0.2rem;
+    cursor: pointer;
+  }
+  .item-delete-btn {
+    border: none;
+    background: transparent;
+    color: #b91c1c;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-left: 0.4rem;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
+  }
+  .add-item-row {
+    margin-top: 0.5rem;
+  }
+  .complete-msg {
+    color: green;
+    font-weight: bold;
+    display: none;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .library-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.6rem;
+    box-shadow: 0 0 6px rgba(0,0,0,0.08);
+    gap: 0.5rem;
+  }
+  .library-card .lib-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+  .library-card button.open-btn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.45rem 1rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .library-card button.open-btn:hover { background: #1d4ed8; }
+  #start-screen .import-row {
+    text-align: center;
+    margin: 1.25rem 0;
+  }
+  #start-screen .import-row button {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+
+<div id="download-notice" style="display:none; position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); background:#111827; color:#fff; padding:0.6rem 1.1rem; border-radius:6px; font-size:0.85rem; z-index:1000; box-shadow:0 2px 10px rgba(0,0,0,0.3); max-width:90%; text-align:center;"></div>
+
+<div id="start-screen">
+  <h1>MD-80 Normal Checklist</h1>
+  <h2>Select checklist</h2>
+  <div class="subtitle">Choose which checklist/version to open. Multiple aircraft types and versions can be stored here.</div>
+  <div id="local-file-warning" style="display:none; background:#fff7ed; border:1px solid #fdba74; color:#9a3412; border-radius:6px; padding:0.6rem 1rem; font-size:0.8rem; margin-bottom:1rem; text-align:center;"></div>
+  <div id="checklist-library-list"></div>
+  <div id="backup-warning" style="display:none; background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; border-radius:6px; padding:0.6rem 1rem; font-size:0.8rem; margin-top:1rem; text-align:center;"></div>
+  <div id="build-stamp" style="text-align:center; font-size:0.7rem; color:#aaa; margin-top:0.5rem;">App version 2026-11-07 (iPad hosting / offline)</div>
+  <div class="import-row">
+    <button id="import-checklist-btn">Import checklist or backup from file</button>
+    <input type="file" id="import-checklist-input" style="display:none" />
+  </div>
+</div>
+
+<div id="app-screen" style="display:none;">
+
+<h1 id="app-title">MD-80 Normal Checklist</h1>
+<div class="subtitle" id="app-subtitle">Diamond Air Xpress &mdash; digitized from Norm_Checklist.pdf</div>
+<div class="subtitle" id="template-info" style="font-weight: bold;"></div>
+
+<div class="legend">
+  <b>*</b> = Transit item &mdash; must be done every time, also if the aircraft has been without power (AC power down).
+</div>
+
+<div class="edit-banner" id="edit-banner" style="display:none;">
+  Edit mode: edit text directly, remove items with ✕, add new items at the bottom of a section, or tick/untick "TA" for a turnaround item. Changes are a draft until you press "Save changes to this checklist" — they do NOT affect the saved checklist until you save.
+</div>
+
+<div class="toolbar">
+  <button id="switch-checklist">Switch checklist</button>
+  <button id="turnaround">Turn Around</button>
+  <button id="new-flight">New flight</button>
+  <button id="edit-toggle">Edit</button>
+  <button id="restore-template" style="display:none;">Restore original</button>
+  <button id="save-changes" style="display:none; background:#16a34a; color:#fff; border-color:#15803d; font-weight:bold;">Save changes to this checklist</button>
+  <button id="save-checklist">Save checklist as...</button>
+  <button id="export-log">Export log</button>
+  <button id="export-backup">Save all (full backup)</button>
+  <button id="import-backup-btn">Open full backup</button>
+  <input type="file" id="import-backup-input" style="display:none" />
+  <button id="expand-all">Expand all</button>
+  <button id="collapse-all">Collapse all</button>
+  <button id="reset-all">Reset to fresh start</button>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div id="checklist-root"></div>
+
+<details id="flights-panel" style="margin-top: 1.5rem;">
+  <summary style="font-size: 0.95rem;">Leg (<span id="flights-count">0</span>)</summary>
+  <div id="flights-list" style="margin-top: 0.5rem;"></div>
+</details>
+
+</div>
+
+<script>
+  // Storage wrapper: if the browser blocks localStorage (e.g. a file preview),
+  // fall back to memory so the app still starts, and warn that nothing is saved.
+  let storagePersistent = true;
+  const store = (function () {
+    try {
+      const t = window.localStorage;
+      t.setItem("__md80_test", "1");
+      t.removeItem("__md80_test");
+      return t;
+    } catch (e) {
+      storagePersistent = false;
+      const mem = {};
+      return {
+        getItem: (k) => (Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null),
+        setItem: (k, v) => { mem[k] = String(v); },
+        removeItem: (k) => { delete mem[k]; }
+      };
+    }
+  })();
+  const DEFAULT_SECTIONS = [{"id": "cockpit-preparation", "title": "Cockpit Preparation", "items": [{"text": "Maintenance Log - CHECK / ON BOARD", "crew": "", "transit": true}, {"text": "Circuit Breakers - CHECK", "crew": "", "transit": true}, {"text": "BATT Switch - ON/LOCKED", "crew": "", "transit": true}, {"text": "Ground Service Elec Pwr/Maintenance Interphone Sws - OFF", "crew": "", "transit": false}, {"text": "Flight Recorder - SET", "crew": "", "transit": false}, {"text": "ENG FIRE DETECT LOOPS Switches - BOTH", "crew": "", "transit": false}, {"text": "Electrical, Pneumatic and Air Conditioning Systems - SET", "crew": "", "transit": false}]}, {"id": "apu-power", "title": "APU Power", "items": [{"text": "BATT Switch - ON/LOCK", "crew": "", "transit": false}, {"text": "Fire Warning - CHECK", "crew": "", "transit": false}, {"text": "START PUMP Switch - ON", "crew": "", "transit": false}, {"text": "APU FIRE CONT Switch - NORM", "crew": "", "transit": false}, {"text": "APU AIR Switch - OFF", "crew": "", "transit": false}, {"text": "APU DOORS Control Switch - AUTO", "crew": "", "transit": false}, {"text": "APU MASTER Switch - START", "crew": "", "transit": false}]}, {"id": "after-apu-start", "title": "After APU Start", "items": [{"text": "Volts/Frequency - CHECK", "crew": "", "transit": false}, {"text": "APU L and R BUS Switches - ON", "crew": "", "transit": false}, {"text": "RIGHT MAIN or CTR WING Pump Switch - ON", "crew": "", "transit": false}, {"text": "START PUMP Switch - OFF", "crew": "", "transit": false}]}, {"id": "apu-air-conditioning", "title": "APU Air Conditioning", "items": [{"text": "CABIN ALT Control Lever - AUTO / VALVE OPEN", "crew": "", "transit": false}, {"text": "PNEU X-FEED VALVE Levers - SET", "crew": "", "transit": false}, {"text": "APU AIR Switch - SET", "crew": "", "transit": false}, {"text": "AIR CONDITIONING SUPPLY Switches - AUTO", "crew": "", "transit": false}, {"text": "CKPT/CABIN TEMP Selectors - SET", "crew": "", "transit": false}, {"text": "Volts/Frequency - CHECK", "crew": "", "transit": false}]}, {"id": "external-power", "title": "External Power", "items": [{"text": "EXT PWR AVAIL Light - ILLUMINATED", "crew": "", "transit": false}, {"text": "EXT PWR L and R BUS Switches - ON", "crew": "", "transit": false}, {"text": "EXT AIR CONDITIONING - SET", "crew": "", "transit": false}]}, {"id": "before-start", "title": "Before Start", "items": [{"text": "CADC, FD CMD/FLT DIR, AHRS Selectors - NORM", "crew": "CM2", "transit": false}, {"text": "Cockpit Voice Recorder - CHECK/SET", "crew": "CM2", "transit": false}, {"text": "AHRS Alignment - CHECK", "crew": "CM2", "transit": false}, {"text": "ENG SYNC Selector - OFF", "crew": "CM2", "transit": false}, {"text": "Ground Proximity Warning System - CHECK/NORM", "crew": "CM1", "transit": false}, {"text": "Windshear System - CHECK", "crew": "CM1", "transit": false}, {"text": "HF Radios - CHECK/SET", "crew": "CM1", "transit": false}, {"text": "CSD Disconnect Switches - NORM", "crew": "CM1", "transit": false}, {"text": "GEN Switches - RESET AND ON", "crew": "CM1", "transit": false}, {"text": "AC/DC BUS X TIE Switches - AUTO/OPEN", "crew": "CM1", "transit": false}, {"text": "Emergency Electrical Power - CHECK/OFF", "crew": "CM1", "transit": true}, {"text": "ANTI-SKID System - CHECK/ARM", "crew": "CM1", "transit": true}, {"text": "Stall Test - CHECK", "crew": "CM1", "transit": true}, {"text": "Maximum Speed Warning Test - CHECK", "crew": "CM1", "transit": false}, {"text": "MACH TRIM COMP Switch - NORM", "crew": "CM1", "transit": false}, {"text": "ICE FOD Switch - CHECK", "crew": "CM1", "transit": false}, {"text": "YAW DAMP Switch - ON", "crew": "CM1", "transit": false}, {"text": "RADIO RACK Switch - FAN", "crew": "CM1", "transit": false}, {"text": "AIR COND SHUTOFF Switch - AUTO", "crew": "CM1", "transit": true}, {"text": "Air Conditioning - SET", "crew": "CM1", "transit": false}, {"text": "RAM AIR Switch - OFF", "crew": "CM1", "transit": false}, {"text": "Cabin Pressurization System - SET", "crew": "CM1", "transit": true}, {"text": "Fuel Tank Pumps/Aux Transfer Pumps - CHECKED / AS REQUIRED", "crew": "CM1", "transit": true}, {"text": "FUEL X-FEED Lever - OFF", "crew": "CM1", "transit": true}, {"text": "Start Switches - OFF", "crew": "CM1", "transit": false}, {"text": "ENG IGN Selector - OFF", "crew": "CM1", "transit": false}, {"text": "FUEL HEAT Switches - OFF", "crew": "CM1", "transit": false}, {"text": "Emergency Lights - CHECK/ARM", "crew": "CM1", "transit": false}, {"text": "NO SMOK/SEAT BELTS Switches - AUTO/ON", "crew": "CM1", "transit": true}, {"text": "Pitot Heat - CHECK/CAPT", "crew": "CM1", "transit": true}, {"text": "AIR FOIL/ENG Anti-Ice Switches - OFF", "crew": "CM1", "transit": false}, {"text": "Windshield Anti-Ice and Anti-Fog - ON/SET", "crew": "CM1", "transit": true}, {"text": "Windshield Wipers - PARKED", "crew": "CM1", "transit": false}, {"text": "Annunciator/Digital Lights - CHECK", "crew": "CM1/2", "transit": true}, {"text": "Exterior Lights - AS REQUIRED", "crew": "CM1/2", "transit": true}, {"text": "VHF NAV Radios - AS REQUIRED", "crew": "CM1/2", "transit": true}, {"text": "Flight Guidance - CHECK", "crew": "CM1/2", "transit": false}, {"text": "Fire Warning System (If Not Tested Previously) - CHECK", "crew": "CM1", "transit": true}]}, {"id": "before-start-continued", "title": "Before Start Continued", "items": [{"text": "ART Switch - AUTO", "crew": "CM1", "transit": true}, {"text": "TRI / TRP / RAT / SAT - CHECK", "crew": "CM1", "transit": true}, {"text": "Fuel Quantity - CHECK", "crew": "CM1", "transit": false}, {"text": "FUEL USED - RESET", "crew": "CM1", "transit": true}, {"text": "ENGINE REVERSE THRUST Lights - CHECK", "crew": "CM1", "transit": false}, {"text": "Engine Instruments - CHECK", "crew": "CM1", "transit": true}, {"text": "Hydraulic System - CHECK / HI / OFF", "crew": "CM2", "transit": false}, {"text": "GEAR DOOR OPEN Light - EXTINGUISHED", "crew": "CM1", "transit": false}, {"text": "Parking Brakes - SET", "crew": "CM1", "transit": true}, {"text": "Flight Instruments - TEST/CHECK/SET", "crew": "CM1/2", "transit": true}, {"text": "ADF(s) - SET", "crew": "CM1", "transit": false}, {"text": "Radar - CHECK", "crew": "CM1", "transit": false}, {"text": "ATC Transponder - ON", "crew": "CM1", "transit": false}, {"text": "Stabilizer - CHECK", "crew": "CM1", "transit": false}, {"text": "SPOILER Lever - DISARMED", "crew": "CM1", "transit": false}, {"text": "RUD HYD CONT Lever - PWR", "crew": "CM1", "transit": false}, {"text": "Takeoff Warning/Throttles - CHECK/IDLE", "crew": "CM1", "transit": true}, {"text": "FUEL Levers - OFF", "crew": "CM1", "transit": false}, {"text": "CABIN ALT Control Lever - AUTO/VALVE OPEN", "crew": "CM1", "transit": false}, {"text": "FLAP/SLAT Handle - UP/RET, LIGHTS EXTINGUISHED", "crew": "CM1", "transit": true}, {"text": "COMM Radios - CHECK/SET", "crew": "CM1", "transit": false}, {"text": "Rudder/Aileron Trim - CHECK/SET", "crew": "CM1", "transit": false}, {"text": "Gear Pins - 3 ON BOARD", "crew": "CM1", "transit": true}, {"text": "Emergency Equipment - CHECK", "crew": "CM1", "transit": false}, {"text": "Ship's Papers - ON BOARD/CHECK", "crew": "CM1", "transit": true}, {"text": "FMS - CHECK/SET", "crew": "CM1", "transit": true}, {"text": "Takeoff Data - SET", "crew": "CM1", "transit": true}, {"text": "ASSUMED TEMP Selector - SET", "crew": "CM1", "transit": true}, {"text": "FLAP T.O. Selector - SET", "crew": "CM1", "transit": true}, {"text": "Stabilizer Takeoff Position Display - ___%/___° SET", "crew": "CM1", "transit": true}, {"text": "Stabilizer - SET", "crew": "CM1", "transit": true}, {"text": "AHRS Alignment - CHECK", "crew": "CM1", "transit": false}, {"text": "Cabin Report - RECEIVED", "crew": "CM1", "transit": false}]}, {"id": "start", "title": "Start", "items": [{"text": "Doors/Windows/Pilot Seats/Slides - CLOSED/CHECKED/ARMED", "crew": "CM1/2", "transit": false}, {"text": "Parking Brake - AS REQUIRED", "crew": "CM1", "transit": false}, {"text": "PNEU X-FEED VALVE Levers - OPEN", "crew": "CM2", "transit": false}, {"text": "ENG HYD PUMPS - HI / OFF", "crew": "CM2", "transit": false}, {"text": "ANTI COLLISION LT Switch - ON", "crew": "CM2", "transit": false}, {"text": "AIR CONDITIONING SUPPLY Switches - OFF", "crew": "CM2", "transit": false}, {"text": "GALLEY Power Switch - OFF", "crew": "CM2", "transit": false}, {"text": "ENG IGN Selector - SET", "crew": "CM1", "transit": false}, {"text": "PNEU PRESS Gage - CHECK", "crew": "CM1", "transit": false}]}, {"id": "after-start", "title": "After Start", "items": [{"text": "ENG IGN Selector - OFF", "crew": "CM1", "transit": false}, {"text": "AIR CONDITIONING SUPPLY Switches - AUTO", "crew": "CM1", "transit": false}, {"text": "Ground Equipment - REMOVE", "crew": "CM1", "transit": false}, {"text": "Electrical System - CHECK/SET", "crew": "CM1", "transit": false}, {"text": "GALLEY Power Switch - ON", "crew": "CM1", "transit": false}, {"text": "Air Foil/Engine Anti-Ice - SET", "crew": "CM1", "transit": false}, {"text": "PNEU X-FEED VALVE Levers - AS REQUIRED", "crew": "CM1", "transit": false}, {"text": "Hydraulic System - CHECK/HI/ON", "crew": "CM2", "transit": false}, {"text": "Annunciator/Annunciation Panel - CHECK", "crew": "CM1/2", "transit": false}]}, {"id": "taxi", "title": "Taxi", "items": [{"text": "Flaps/Slats - ___°/T.O.", "crew": "CM2", "transit": false}, {"text": "Flight Controls - CHECK", "crew": "CM1/2", "transit": false}, {"text": "Spoiler Lever - ARM", "crew": "CM2", "transit": false}, {"text": "Takeoff Data / TRP / TRI / Airspeed Bugs - SET/CROSS-CHECK", "crew": "CM2", "transit": false}, {"text": "Flight Guidance/Radios - SET", "crew": "CM2", "transit": false}, {"text": "APU AIR/MASTER Switches - OFF/AS REQUIRED", "crew": "CM2", "transit": false}, {"text": "PNEU X-FEED VALVE - SET", "crew": "CM2", "transit": false}, {"text": "Fuel Heat - AS REQUIRED", "crew": "CM2", "transit": false}, {"text": "Radar - AS REQUIRED", "crew": "CM2", "transit": false}, {"text": "Shoulder Harness - ON", "crew": "CM1/2", "transit": false}, {"text": "Takeoff Briefing - COMPLETE", "crew": "PF", "transit": false}]}, {"id": "before-takeoff", "title": "Before Takeoff", "items": [{"text": "Alert the cabin (just prior to takeoff)", "crew": "CM2", "transit": false}, {"text": "FDAS (Flight Deck Access System) - SET", "crew": "CM2", "transit": false}, {"text": "FMS CLB - SET", "crew": "CM2", "transit": false}, {"text": "Annunciator/Annunciation Panel - CHECK", "crew": "CM1/2", "transit": false}, {"text": "Landing Lights - ON", "crew": "CM2", "transit": false}, {"text": "Flaps/Slats - ___°/T.O.", "crew": "CM1/2", "transit": false}, {"text": "ENG IGN Selector - ON", "crew": "CM2", "transit": false}, {"text": "Radar - ON", "crew": "CM2", "transit": false}, {"text": "FMS - RUNWAY UPDATE", "crew": "CM2", "transit": false}, {"text": "Cabin Call - COMPLETE", "crew": "CM2", "transit": false}]}, {"id": "after-takeoff--climb", "title": "After Takeoff / Climb", "items": [{"text": "Landing Gear - UP", "crew": "PNF", "transit": false}, {"text": "Flaps/Slats - UP/RET/LIGHTS EXTINGUISHED", "crew": "PNF", "transit": false}, {"text": "Spoiler Lever - DISARM", "crew": "PNF", "transit": false}, {"text": "HYD PUMPS Switches - LOW/OFF", "crew": "CM2", "transit": false}, {"text": "Fuel Tank Pumps - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "ENG IGN Selector - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "FUEL HEAT - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "SEAT BELTS - SET", "crew": "PNF", "transit": false}, {"text": "FLAP T.O. Selector - STOWED", "crew": "PNF", "transit": false}, {"text": "ENG SYNC Selector - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "Cabin Pressurization - OBSERVE AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "ART Switch - AUTO", "crew": "PNF", "transit": false}, {"text": "Annunciator/Annunciation Panel - CHECK", "crew": "PNF", "transit": false}, {"text": "Landing Lights - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "Altimeters - SET/CROSS-CHECK", "crew": "PF/PNF", "transit": false}]}, {"id": "descent--approach", "title": "Descent / Approach", "items": [{"text": "Pressurization - SET", "crew": "PNF", "transit": false}, {"text": "ENG SYNC Selector - OFF", "crew": "PNF", "transit": false}, {"text": "Ice Protection/FUEL HEAT - SET", "crew": "PNF", "transit": false}, {"text": "Windshield Anti-Fog - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "Fuel Tank Pumps - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "FUEL HEAT Switch - OFF", "crew": "PNF", "transit": false}, {"text": "SEAT BELTS Switch - ON", "crew": "PNF", "transit": false}, {"text": "ENG HYD PUMPS and HYD PRESS - ON/HI/CHECK", "crew": "CM2", "transit": false}, {"text": "Landing Data and Briefing - COMPLETE", "crew": "", "transit": false}, {"text": "Altimeters - SET/CROSS-CHECK", "crew": "CM1/2", "transit": false}, {"text": "Speed Brakes - VERIFY RETRACTED", "crew": "PNF", "transit": false}, {"text": "Flaps - SET", "crew": "PNF", "transit": false}]}, {"id": "before-landing", "title": "Before Landing", "items": [{"text": "ENG IGN Selector - ON", "crew": "PNF", "transit": false}, {"text": "Landing Gear - DOWN 3 GREEN", "crew": "PNF", "transit": false}, {"text": "Cabin Pressurization - AS REQUIRED", "crew": "PNF", "transit": false}, {"text": "SPOILER Lever - ARM", "crew": "CM1", "transit": false}, {"text": "Flaps/Slats - ___°/LAND", "crew": "PNF", "transit": false}, {"text": "TRI/TRP - GA", "crew": "PNF", "transit": false}, {"text": "WING LDG LTS / NOSE LTS EXT - ON / ON", "crew": "PNF", "transit": false}, {"text": "Annunciator/Annunciation Panel - CHECK", "crew": "PNF", "transit": false}]}, {"id": "after-landing", "title": "After Landing", "items": [{"text": "Spoilers - RETRACTED", "crew": "CM1", "transit": false}, {"text": "Flaps/Slats - 15°/T.O. EXT", "crew": "CM2", "transit": false}, {"text": "APU - AS REQUIRED", "crew": "CM2", "transit": false}, {"text": "ENG IGN Selector - OFF", "crew": "CM2", "transit": false}, {"text": "Pitot Heat/Ice Protection - OFF", "crew": "CM2", "transit": false}, {"text": "Landing Lights/Exterior Lights - SET", "crew": "CM2", "transit": false}, {"text": "Radar - STBY", "crew": "CM2", "transit": false}]}, {"id": "parking", "title": "Parking", "items": [{"text": "Parking Brake - AS REQUIRED", "crew": "CM1", "transit": false}, {"text": "Flaps/Slats - UP/RET", "crew": "CM1", "transit": false}, {"text": "Slides - DISARMED", "crew": "CM1", "transit": false}, {"text": "APU/EXT Power - CHECK/SET", "crew": "CM1", "transit": false}, {"text": "AIR CONDITIONING SUPPLY Switches - SET", "crew": "CM1", "transit": false}, {"text": "FUEL Levers - OFF", "crew": "CM1", "transit": false}, {"text": "SEAT BELTS Switch - OFF", "crew": "CM1", "transit": false}, {"text": "Fuel Pumps - SET", "crew": "CM1", "transit": false}, {"text": "ANTI COLLISION LT Switch - OFF", "crew": "CM1", "transit": false}, {"text": "ENG HYD PUMPS Switches - HI / OFF", "crew": "CM1", "transit": false}]}, {"id": "before-leaving-airplane", "title": "Before Leaving Airplane", "items": [{"text": "GROUND SERVICE ELEC PWR Panel - SET", "crew": "CM1", "transit": false}, {"text": "EMER LTS Switch - OFF", "crew": "CM1", "transit": false}, {"text": "AIR CONDITIONING SUPPLY Switches - SET", "crew": "CM1", "transit": false}, {"text": "GALLEY Power Switch - OFF", "crew": "CM1", "transit": false}, {"text": "Fuel Pumps - SET", "crew": "CM1", "transit": false}, {"text": "WINDSHIELD ANTI-FOG/ANTI-ICE - OFF", "crew": "CM1", "transit": false}, {"text": "FD Switches - OFF", "crew": "CM1/2", "transit": false}, {"text": "Exterior Lights - SET", "crew": "CM1", "transit": false}, {"text": "RUD HYD CONT Lever - MAN", "crew": "CM1", "transit": false}, {"text": "CABIN ALT Control Lever - SET", "crew": "CM1", "transit": false}, {"text": "Transponder/ADFs/HF Radios - OFF", "crew": "CM2", "transit": false}, {"text": "Cockpit Lights - EXTINGUISHED", "crew": "CM1", "transit": false}, {"text": "AC BUS POWER Switches - SET", "crew": "CM1", "transit": false}, {"text": "APU - SET", "crew": "CM1", "transit": false}, {"text": "BATT Switch - SET", "crew": "CM1", "transit": false}]}];
+
+  const LIBRARY_KEY = "md80-checklist-library-v1";
+  const ACTIVE_ID_KEY = "md80-checklist-active-id-v1";
+  const FLIGHTS_KEY = "md80-norm-checklist-flights-v1";
+  const CYCLE = ["empty", "green", "yellow", "green"];
+  const STATE_LABEL = { empty: "", green: "✓", yellow: "!" };
+  const LAST_BACKUP_KEY = "md80-last-backup-at";
+
+  function updateBackupWarning() {
+    const el = document.getElementById("backup-warning");
+    if (!el) return;
+    const last = store.getItem(LAST_BACKUP_KEY);
+    if (!last) {
+      el.textContent = "⚠ You have never made a full backup. Data is only stored in this browser and can disappear if you clear browser data. Press \"Save all (full backup)\" inside a checklist to secure it.";
+      el.style.display = "block";
+      el.style.background = "#fef2f2";
+      el.style.borderColor = "#fca5a5";
+      el.style.color = "#991b1b";
+      return;
+    }
+    const daysSince = (Date.now() - new Date(last).getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSince > 7) {
+      el.textContent = "⚠ Last full backup is " + Math.floor(daysSince) + " days old (" + new Date(last).toLocaleDateString("en-GB") + "). Consider making a new one.";
+      el.style.display = "block";
+      el.style.background = "#fef2f2";
+      el.style.borderColor = "#fca5a5";
+      el.style.color = "#991b1b";
+    } else {
+      el.textContent = "✓ Last full backup: " + new Date(last).toLocaleString("en-GB");
+      el.style.display = "block";
+      el.style.background = "#f0fdf4";
+      el.style.borderColor = "#86efac";
+      el.style.color = "#166534";
+    }
+  }
+
+  let editMode = false;
+
+  function withIds(sections) {
+    return sections.map(section => ({
+      id: section.id,
+      title: section.title,
+      items: section.items.map((item, i) => ({
+        id: section.id + "-" + i,
+        text: item.text,
+        crew: item.crew,
+        transit: item.transit
+      }))
+    }));
+  }
+
+  // --- Library of checklists (multiple aircraft types / versions) ---
+  function migrateEnglishDefaults(lib) {
+    let changed = false;
+    lib.forEach(e => {
+      if (e.name === "Norm Checkliste (standard)") { e.name = "Normal Checklist (standard)"; changed = true; }
+      if (e.title === "MD-80 Norm Checkliste") { e.title = "MD-80 Normal Checklist"; changed = true; }
+      if (e.subtitle === "Diamond Air Xpress — digitaliseret fra Norm_Checklist.pdf") { e.subtitle = "Diamond Air Xpress — digitized from Norm_Checklist.pdf"; changed = true; }
+    });
+    return changed;
+  }
+
+  function loadLibrary() {
+    try {
+      const raw = store.getItem(LIBRARY_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) {
+          if (migrateEnglishDefaults(parsed)) store.setItem(LIBRARY_KEY, JSON.stringify(parsed));
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    const initial = [{
+      id: "default-md80",
+      aircraftType: "MD-80",
+      name: "Normal Checklist (standard)",
+      version: "1",
+      title: "MD-80 Normal Checklist",
+      subtitle: "Diamond Air Xpress — digitized from Norm_Checklist.pdf",
+      savedAt: new Date().toISOString(),
+      sections: withIds(DEFAULT_SECTIONS)
+    }];
+    store.setItem(LIBRARY_KEY, JSON.stringify(initial));
+    return initial;
+  }
+  function saveLibrary(lib) {
+    store.setItem(LIBRARY_KEY, JSON.stringify(lib));
+  }
+
+  let LIBRARY = loadLibrary();
+  let ACTIVE_ID = null;
+  let TEMPLATE = null;
+  let state = {};
+  let templateDirty = false;
+  let draftTitle = "";
+  let draftSubtitle = "";
+
+  function activeEntry() {
+    return LIBRARY.find(e => e.id === ACTIVE_ID);
+  }
+
+  function markTemplateDirty() {
+    templateDirty = true;
+    updateDirtyIndicator();
+  }
+
+  function updateDirtyIndicator() {
+    const btn = document.getElementById("save-changes");
+    if (!btn) return;
+    btn.style.display = (editMode && templateDirty) ? "inline-block" : "none";
+  }
+
+  function persistActiveTemplate() {
+    const entry = activeEntry();
+    if (!entry) return;
+    entry.sections = JSON.parse(JSON.stringify(TEMPLATE));
+    entry.title = draftTitle;
+    entry.subtitle = draftSubtitle;
+    entry.savedAt = new Date().toISOString();
+    saveLibrary(LIBRARY);
+    templateDirty = false;
+    updateDirtyIndicator();
+    updateTemplateInfo();
+  }
+
+  function stateKeyFor(id) {
+    return "md80-norm-checklist-state-v1:" + id;
+  }
+  function loadStateFor(id) {
+    try {
+      return JSON.parse(store.getItem(stateKeyFor(id))) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function saveState(s) {
+    store.setItem(stateKeyFor(ACTIVE_ID), JSON.stringify(s));
+  }
+
+  function legCounterKeyFor(id) {
+    return "md80-legcounter-v1:" + id;
+  }
+  function getNextLegNumber(id) {
+    const raw = store.getItem(legCounterKeyFor(id));
+    const n = parseInt(raw, 10);
+    return (raw && !isNaN(n)) ? n : 1;
+  }
+  function bumpLegNumber(id) {
+    const next = getNextLegNumber(id) + 1;
+    store.setItem(legCounterKeyFor(id), String(next));
+  }
+  function resetLegNumber(id) {
+    store.setItem(legCounterKeyFor(id), "1");
+  }
+
+  const root = document.getElementById("checklist-root");
+
+  function itemKey(sectionId, id) {
+    return sectionId + ":" + id;
+  }
+
+  function loadAllStates() {
+    const result = {};
+    LIBRARY.forEach(entry => {
+      result[entry.id] = loadStateFor(entry.id);
+    });
+    return result;
+  }
+
+  function loadFlights() {
+    try {
+      return JSON.parse(store.getItem(FLIGHTS_KEY)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveFlights(flights) {
+    store.setItem(FLIGHTS_KEY, JSON.stringify(flights));
+  }
+
+  function computeStats(snapshot) {
+    let total = 0, green = 0, yellow = 0, empty = 0;
+    TEMPLATE.forEach(section => {
+      section.items.forEach(item => {
+        total++;
+        const saved = snapshot[itemKey(section.id, item.id)];
+        const status = saved ? saved.status : "empty";
+        if (status === "green") green++;
+        else if (status === "yellow") yellow++;
+        else empty++;
+      });
+    });
+    return { total, green, yellow, empty };
+  }
+
+  function formatLogText(snapshot, label, savedAt) {
+    const lines = [];
+    const entry = activeEntry();
+    lines.push("FLIGHT LOG - " + (entry ? entry.aircraftType + " / " + entry.name + " (v" + entry.version + ")" : ""));
+    lines.push("Flight: " + (label || "Unnamed"));
+    lines.push("Saved: " + new Date(savedAt).toLocaleString("en-GB"));
+    lines.push("");
+    TEMPLATE.forEach(section => {
+      lines.push("== " + section.title.toUpperCase() + " ==");
+      const times = snapshot["sectiontime:" + section.id];
+      if (times && (times.first || times.last)) {
+        const fmt = (iso) => new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+        const t = [];
+        if (times.first) t.push("First: " + fmt(times.first));
+        if (times.last) t.push("Last: " + fmt(times.last));
+        lines.push("(" + t.join(" · ") + ")");
+      }
+      section.items.forEach(item => {
+        const saved = snapshot[itemKey(section.id, item.id)];
+        const status = saved ? saved.status : "empty";
+        const statusLabel = status === "green" ? "[OK]" : status === "yellow" ? "[!! ]" : "[-- ]";
+        const transitMark = item.transit ? "*" : " ";
+        const crew = item.crew ? " (" + item.crew + ")" : "";
+        lines.push(statusLabel + " " + transitMark + " " + item.text + crew);
+      });
+      lines.push("");
+    });
+    return lines.join("\n");
+  }
+
+  async function downloadFile(filename, content, mime) {
+    if (window.showSaveFilePicker) {
+      try {
+        const ext = "." + filename.split(".").pop();
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{ description: "Fil", accept: { [mime]: [ext] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        showDownloadNotice(filename, true);
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return; // user cancelled
+        // Otherwise fall back to a regular download below
+      }
+    }
+    const blob = new Blob([content], { type: mime + ";charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    showDownloadNotice(filename, false);
+  }
+
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+
+  function showNotice(text) {
+    const el = document.getElementById("download-notice");
+    if (!el) return;
+    el.textContent = text;
+    el.style.display = "block";
+    clearTimeout(el._hideTimer);
+    el._hideTimer = setTimeout(() => { el.style.display = "none"; }, 8000);
+  }
+
+  function showDownloadNotice(filename, pickedLocation) {
+    showNotice(pickedLocation
+      ? "✓ Saved: " + filename
+      : "✓ Downloaded: " + filename + (isIOS()
+          ? " — find it in the Files app under Downloads"
+          : " — check your browser's Downloads folder"));
+  }
+
+  // Reads a chosen JSON file and reports exactly what is wrong if it fails.
+  function readImportFile(input, onData) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const finish = () => { try { input.value = ""; } catch (e) {} };
+    if (!file.size) {
+      alert("The file \"" + file.name + "\" is empty (0 bytes). The download probably failed. Make a new backup on the original device and transfer it again.");
+      finish();
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => {
+      alert("Could not read \"" + file.name + "\" (" + file.size + " bytes): " +
+        ((reader.error && reader.error.message) || "unknown error") +
+        ". If the file is in iCloud Drive, open it once in the Files app so it is downloaded to the device.");
+      finish();
+    };
+    reader.onload = () => {
+      let data;
+      try {
+        data = JSON.parse(String(reader.result).replace(/^\uFEFF/, ""));
+      } catch (err) {
+        alert("\"" + file.name + "\" (" + file.size + " bytes) is not valid JSON: " + err.message +
+          ". The file may be damaged or is not a checklist/backup file.");
+        finish();
+        return;
+      }
+      try {
+        onData(data, file);
+      } finally {
+        finish();
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function timestampForFilename() {
+    return new Date().toISOString().replace(/[:.]/g, "-").slice(0, 16);
+  }
+
+  function renderFlightsList() {
+    const flights = loadFlights();
+    document.getElementById("flights-count").textContent = flights.length;
+    const list = document.getElementById("flights-list");
+    list.innerHTML = "";
+    if (flights.length === 0) {
+      const empty = document.createElement("div");
+      empty.style.fontSize = "0.85rem";
+      empty.style.color = "#888";
+      empty.textContent = "No saved legs yet.";
+      list.appendChild(empty);
+      return;
+    }
+    flights.slice().reverse().forEach(flight => {
+      const row = document.createElement("div");
+      row.style.display = "flex";
+      row.style.justifyContent = "space-between";
+      row.style.alignItems = "center";
+      row.style.padding = "0.4rem 0";
+      row.style.borderBottom = "1px solid #eee";
+      row.style.fontSize = "0.85rem";
+
+      const info = document.createElement("div");
+      const dateStr = new Date(flight.savedAt).toLocaleString("en-GB");
+      const acLine = flight.aircraftType ? (flight.aircraftType + " — ") : "";
+      info.innerHTML = "<b>" + (flight.label || "Unnamed") + "</b><br>" +
+        acLine + dateStr + " — " + flight.stats.green + " green, " + flight.stats.yellow + " yellow, " + flight.stats.empty + " empty";
+
+      const actions = document.createElement("div");
+      actions.style.display = "flex";
+      actions.style.gap = "0.4rem";
+
+      const dlBtn = document.createElement("button");
+      dlBtn.className = "reset-section";
+      dlBtn.textContent = "Download log";
+      dlBtn.addEventListener("click", () => {
+        downloadFile(
+          "md80-log-" + (flight.label || "leg").replace(/\s+/g, "_") + "-" + flight.id + ".txt",
+          formatLogText(flight.snapshot, flight.label, flight.savedAt),
+          "text/plain"
+        );
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "reset-section";
+      delBtn.textContent = "Delete";
+      delBtn.addEventListener("click", () => {
+        if (confirm("Delete saved leg \"" + (flight.label || "Unnamed") + "\"?")) {
+          const updated = loadFlights().filter(f => f.id !== flight.id);
+          saveFlights(updated);
+          renderFlightsList();
+        }
+      });
+
+      actions.appendChild(dlBtn);
+      actions.appendChild(delBtn);
+      row.appendChild(info);
+      row.appendChild(actions);
+      list.appendChild(row);
+    });
+  }
+
+  // --- Start screen (checklist picker) ---
+  function computeLatestMap() {
+    const map = {};
+    LIBRARY.forEach(entry => {
+      const key = (entry.aircraftType || "") + "||" + (entry.name || "");
+      if (!map[key] || new Date(entry.savedAt) > new Date(map[key].savedAt)) {
+        map[key] = entry;
+      }
+    });
+    return map;
+  }
+
+  function renderStartScreen() {
+    const list = document.getElementById("checklist-library-list");
+    list.innerHTML = "";
+    const latestMap = computeLatestMap();
+    LIBRARY.slice().reverse().forEach(entry => {
+      const key = (entry.aircraftType || "") + "||" + (entry.name || "");
+      const isLatest = latestMap[key] && latestMap[key].id === entry.id;
+      const nameColor = isLatest ? "inherit" : "#b91c1c";
+      const badge = isLatest
+        ? "<span style='color:#16a34a;font-size:0.7rem;font-weight:normal;'>● Latest version</span>"
+        : "<span style='color:#b91c1c;font-size:0.7rem;font-weight:normal;'>● Not latest version</span>";
+
+      const card = document.createElement("div");
+      card.className = "library-card";
+
+      const info = document.createElement("div");
+      const itemCount = entry.sections.reduce((a, s) => a + s.items.length, 0);
+      info.innerHTML = "<b style='color:" + nameColor + ";'>" + entry.aircraftType + "</b> — " +
+        "<span style='color:" + nameColor + ";'>" + entry.name + "</span> (v" + entry.version + ") " + badge + "<br>" +
+        "<span style='font-size:0.75rem;color:#888;'>" + new Date(entry.savedAt).toLocaleString("en-GB") + " — " + itemCount + " items</span>";
+
+      const actions = document.createElement("div");
+      actions.className = "lib-actions";
+
+      const openBtn = document.createElement("button");
+      openBtn.className = "open-btn";
+      openBtn.textContent = "Open";
+      openBtn.addEventListener("click", () => openChecklist(entry.id));
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "reset-section";
+      delBtn.textContent = "Delete";
+      delBtn.addEventListener("click", () => {
+        if (LIBRARY.length <= 1) {
+          alert("You cannot delete the last checklist.");
+          return;
+        }
+        if (confirm("Delete the checklist \"" + entry.name + "\"? This only deletes the template, not previously saved legs.")) {
+          LIBRARY = LIBRARY.filter(e => e.id !== entry.id);
+          saveLibrary(LIBRARY);
+          renderStartScreen();
+        }
+      });
+
+      actions.appendChild(openBtn);
+      actions.appendChild(delBtn);
+      card.appendChild(info);
+      card.appendChild(actions);
+      list.appendChild(card);
+    });
+  }
+
+  function showStartScreen() {
+    LIBRARY = loadLibrary();
+    document.getElementById("app-screen").style.display = "none";
+    document.getElementById("start-screen").style.display = "block";
+    renderStartScreen();
+    updateBackupWarning();
+    updateLocalFileWarning();
+  }
+
+  function updateLocalFileWarning() {
+    const el = document.getElementById("local-file-warning");
+    if (!el) return;
+    if (!storagePersistent) {
+      el.style.display = "block";
+      el.textContent = "⚠ This browser view does not allow saving data, so NOTHING you do here will be kept, and file import may not work. Put the app online, open it in Safari and use Share → Add to Home Screen (see the README in the zip).";
+      return;
+    }
+    const show = isIOS() && location.protocol === "file:";
+    el.style.display = show ? "block" : "none";
+    if (show) {
+      el.textContent = "⚠ You are running this app from a local file (for example the Files app preview). On iPad/iPhone the file picker and saved data do not work reliably this way. Put the app online, open it in Safari and use Share → Add to Home Screen. See the README in the zip.";
+    }
+  }
+
+  function updateTemplateInfo() {
+    const entry = activeEntry();
+    const el = document.getElementById("template-info");
+    if (entry) {
+      const latestMap = computeLatestMap();
+      const key = (entry.aircraftType || "") + "||" + (entry.name || "");
+      const isLatest = latestMap[key] && latestMap[key].id === entry.id;
+      const badge = isLatest
+        ? "<span style='color:#16a34a;'>● Latest version</span>"
+        : "<span style='color:#b91c1c;'>● Not latest version</span>";
+      el.innerHTML = "Active: " + entry.aircraftType + " — " + entry.name + " — v" + entry.version + " " + badge;
+    } else {
+      el.textContent = "";
+    }
+  }
+
+  function updateHeaderEditability() {
+    const titleEl = document.getElementById("app-title");
+    const subtitleEl = document.getElementById("app-subtitle");
+    titleEl.contentEditable = editMode ? "true" : "false";
+    subtitleEl.contentEditable = editMode ? "true" : "false";
+    titleEl.classList.toggle("editable", editMode);
+    subtitleEl.classList.toggle("editable", editMode);
+  }
+
+  function openChecklist(id) {
+    const entry = LIBRARY.find(e => e.id === id);
+    if (!entry) return;
+    ACTIVE_ID = id;
+    store.setItem(ACTIVE_ID_KEY, id);
+    TEMPLATE = JSON.parse(JSON.stringify(entry.sections));
+    draftTitle = entry.title || "MD-80 Normal Checklist";
+    draftSubtitle = entry.subtitle || "Diamond Air Xpress — digitized from Norm_Checklist.pdf";
+    templateDirty = false;
+    state = loadStateFor(id);
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("app-screen").style.display = "block";
+    editMode = false;
+    document.getElementById("edit-toggle").textContent = "Edit";
+    document.getElementById("edit-toggle").classList.remove("active");
+    document.getElementById("restore-template").style.display = "none";
+    document.getElementById("app-title").textContent = draftTitle;
+    document.getElementById("app-subtitle").textContent = draftSubtitle;
+    updateHeaderEditability();
+    updateDirtyIndicator();
+    updateTemplateInfo();
+    render();
+    renderFlightsList();
+  }
+
+  function render() {
+    root.innerHTML = "";
+    const banner = document.getElementById("edit-banner");
+    if (banner) banner.style.display = editMode ? "block" : "none";
+
+    TEMPLATE.forEach(section => {
+      const details = document.createElement("details");
+
+      const summary = document.createElement("summary");
+      const titleSpan = document.createElement("span");
+      titleSpan.className = "section-title";
+      titleSpan.textContent = section.title;
+
+      const right = document.createElement("span");
+      right.className = "summary-right";
+
+      const countSpan = document.createElement("span");
+      countSpan.className = "section-count";
+      countSpan.textContent = section.items.length + " items";
+
+      const resetBtn = document.createElement("button");
+      resetBtn.className = "reset-section";
+      resetBtn.type = "button";
+      resetBtn.textContent = "Reset";
+      resetBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        section.items.forEach(item => {
+          delete state[itemKey(section.id, item.id)];
+        });
+        delete state["sectiontime:" + section.id];
+        saveState(state);
+        render();
+      });
+
+      right.appendChild(countSpan);
+      right.appendChild(resetBtn);
+      summary.appendChild(titleSpan);
+      summary.appendChild(right);
+      details.appendChild(summary);
+
+      const timeInfo = document.createElement("div");
+      timeInfo.className = "section-time-info";
+      timeInfo.style.fontSize = "0.7rem";
+      timeInfo.style.color = "#888";
+      timeInfo.style.marginTop = "0.15rem";
+      timeInfo.style.marginBottom = "0.3rem";
+      details.appendChild(timeInfo);
+
+      section.items.forEach(item => {
+        const key = itemKey(section.id, item.id);
+        const saved = state[key] || {};
+        const currentStep = saved.step || 0;
+        const currentState = CYCLE[currentStep];
+
+        const row = document.createElement("div");
+        row.className = "checklist-item";
+
+        const box = document.createElement("div");
+        box.className = "status-box";
+        box.dataset.state = currentState;
+        box.dataset.step = currentStep;
+        box.textContent = STATE_LABEL[currentState];
+        box.tabIndex = 0;
+        box.setAttribute("role", "button");
+        box.setAttribute("aria-label", "Status for " + item.text);
+
+        const cycle = () => {
+          const cur = parseInt(box.dataset.step, 10) || 0;
+          const nextStep = (cur + 1) % CYCLE.length;
+          const next = CYCLE[nextStep];
+
+          const timeKey = "sectiontime:" + section.id;
+          const wasSectionUntouched = section.items.every(it => {
+            const s = state[itemKey(section.id, it.id)];
+            return !s || s.status === "empty";
+          });
+
+          box.dataset.step = nextStep;
+          box.dataset.state = next;
+          box.textContent = STATE_LABEL[next];
+          state[key] = { status: next, step: nextStep };
+
+          if (wasSectionUntouched && next !== "empty") {
+            state[timeKey] = state[timeKey] || {};
+            if (!state[timeKey].first) {
+              state[timeKey].first = new Date().toISOString();
+            }
+          }
+
+          saveState(state);
+          const result = checkSectionComplete(details, section);
+          if (result.justReachedGreen) {
+            state[timeKey] = state[timeKey] || {};
+            state[timeKey].last = new Date().toISOString();
+            saveState(state);
+          }
+          if (result.justCompleted) {
+            details.open = false;
+          }
+          updateProgress();
+          updateSectionTimeDisplay(details, section);
+        };
+        box.addEventListener("click", cycle);
+        box.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            cycle();
+          }
+        });
+
+        const text = document.createElement("div");
+        text.className = "item-text" + (editMode ? " editable" : "");
+        text.contentEditable = editMode ? "true" : "false";
+
+        if (item.transit) {
+          const mark = document.createElement("span");
+          mark.className = "transit-mark";
+          mark.textContent = "*";
+          text.appendChild(mark);
+        }
+        text.appendChild(document.createTextNode(item.text));
+
+        if (item.crew) {
+          const tag = document.createElement("span");
+          tag.className = "crew-tag";
+          tag.textContent = item.crew;
+          text.appendChild(tag);
+        }
+
+        text.addEventListener("blur", () => {
+          if (!editMode) return;
+          let plain = text.textContent;
+          if (item.transit) plain = plain.replace(/^\*/, "");
+          if (item.crew) plain = plain.replace(item.crew, "");
+          plain = plain.trim();
+          if (plain && plain !== item.text) {
+            item.text = plain;
+            markTemplateDirty();
+          }
+        });
+
+        row.appendChild(box);
+        row.appendChild(text);
+
+        if (editMode) {
+          const transitLabel = document.createElement("label");
+          transitLabel.className = "transit-label";
+
+          const transitCheckbox = document.createElement("input");
+          transitCheckbox.type = "checkbox";
+          transitCheckbox.checked = !!item.transit;
+          transitCheckbox.addEventListener("change", () => {
+            item.transit = transitCheckbox.checked;
+            markTemplateDirty();
+            render();
+          });
+          transitLabel.appendChild(transitCheckbox);
+          transitLabel.appendChild(document.createTextNode("TA"));
+          row.appendChild(transitLabel);
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "item-delete-btn";
+          delBtn.type = "button";
+          delBtn.textContent = "✕";
+          delBtn.title = "Remove item";
+          delBtn.addEventListener("click", () => {
+            if (confirm("Remove the item \"" + item.text + "\"?")) {
+              section.items = section.items.filter(it => it.id !== item.id);
+              markTemplateDirty();
+              delete state[key];
+              saveState(state);
+              render();
+            }
+          });
+          row.appendChild(delBtn);
+        }
+
+        details.appendChild(row);
+      });
+
+      if (editMode) {
+        const addRow = document.createElement("div");
+        addRow.className = "add-item-row";
+        const addBtn = document.createElement("button");
+        addBtn.className = "reset-section";
+        addBtn.type = "button";
+        addBtn.textContent = "+ Add item";
+        addBtn.addEventListener("click", () => {
+          const text = prompt("Text for new item:");
+          if (!text || !text.trim()) return;
+          const crew = prompt("CM/PF tag (optional, may be left empty):", "") || "";
+          const newItem = {
+            id: section.id + "-new-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+            text: text.trim(),
+            crew: crew.trim(),
+            transit: false
+          };
+          section.items.push(newItem);
+          markTemplateDirty();
+          render();
+        });
+        addRow.appendChild(addBtn);
+        details.appendChild(addRow);
+      }
+
+      const msg = document.createElement("div");
+      msg.className = "complete-msg";
+      msg.textContent = "✓ Section complete";
+      details.appendChild(msg);
+
+      root.appendChild(details);
+      checkSectionComplete(details, section);
+      updateSectionTimeDisplay(details, section);
+    });
+    updateProgress();
+  }
+
+  function updateSectionTimeDisplay(details, section) {
+    const el = details.querySelector(".section-time-info");
+    if (!el) return;
+    const times = state["sectiontime:" + section.id];
+    if (!times || (!times.first && !times.last)) {
+      el.textContent = "";
+      return;
+    }
+    const fmt = (iso) => new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+    const parts = [];
+    if (times.first) parts.push("First check: " + fmt(times.first));
+    if (times.last) parts.push("Last (all items green): " + fmt(times.last));
+    el.textContent = parts.join(" · ");
+  }
+
+  function checkSectionComplete(details, section) {
+    const statuses = section.items.map(item => {
+      const saved = state[itemKey(section.id, item.id)];
+      return saved ? saved.status : "empty";
+    });
+    const notStarted = statuses.every(s => s === "empty");
+    const allDone = statuses.every(s => s !== "empty");
+    const hasYellow = statuses.some(s => s === "yellow");
+    const isGreenComplete = allDone && !hasYellow;
+    const isYellowComplete = allDone && hasYellow;
+
+    const msg = details.querySelector(".complete-msg");
+    if (msg) {
+      if (isGreenComplete) {
+        msg.textContent = "✓ Section complete";
+        msg.style.color = "#16a34a";
+        msg.style.display = "block";
+      } else if (isYellowComplete) {
+        msg.textContent = "! Section complete with remarks";
+        msg.style.color = "#b45309";
+        msg.style.display = "block";
+      } else {
+        msg.style.display = "none";
+      }
+    }
+
+    const titleSpan = details.querySelector(".section-title");
+    const previousKind = titleSpan.classList.contains("complete")
+      ? "green"
+      : titleSpan.classList.contains("warning")
+      ? "yellow"
+      : "none";
+    if (titleSpan) {
+      titleSpan.classList.remove("incomplete", "complete", "warning");
+      if (notStarted) {
+        // default/black, no class needed
+      } else if (isGreenComplete) {
+        titleSpan.classList.add("complete");
+      } else if (isYellowComplete) {
+        titleSpan.classList.add("warning");
+      } else {
+        titleSpan.classList.add("incomplete");
+      }
+    }
+    const newKind = isGreenComplete ? "green" : isYellowComplete ? "yellow" : "none";
+    const justCompleted = newKind !== "none" && newKind !== previousKind;
+    const justReachedGreen = isGreenComplete && previousKind !== "green";
+    return { justCompleted, justReachedGreen };
+  }
+
+  function updateProgress() {
+    let total = 0, done = 0;
+    TEMPLATE.forEach(section => {
+      section.items.forEach(item => {
+        total++;
+        const saved = state[itemKey(section.id, item.id)];
+        if (saved && saved.status === "green") done++;
+      });
+    });
+    document.getElementById("progress").textContent = done + " of " + total + " items checked";
+  }
+
+  document.getElementById("switch-checklist").addEventListener("click", () => {
+    if (templateDirty) {
+      if (!confirm("You have unsaved changes in this checklist. Switch anyway and discard the changes?")) {
+        return;
+      }
+    }
+    showStartScreen();
+  });
+
+  document.getElementById("edit-toggle").addEventListener("click", () => {
+    editMode = !editMode;
+    const btn = document.getElementById("edit-toggle");
+    btn.textContent = editMode ? "Finish editing" : "Edit";
+    btn.classList.toggle("active", editMode);
+    document.getElementById("restore-template").style.display = editMode ? "inline-block" : "none";
+    updateHeaderEditability();
+    updateDirtyIndicator();
+    render();
+  });
+
+  document.getElementById("save-changes").addEventListener("click", () => {
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
+      document.activeElement.blur();
+    }
+    persistActiveTemplate();
+    alert("Your changes have been saved to this checklist.");
+  });
+
+  document.getElementById("app-title").addEventListener("blur", () => {
+    if (!editMode) return;
+    const plain = document.getElementById("app-title").textContent.trim();
+    if (plain && plain !== draftTitle) {
+      draftTitle = plain;
+      markTemplateDirty();
+    }
+  });
+
+  document.getElementById("app-subtitle").addEventListener("blur", () => {
+    if (!editMode) return;
+    const plain = document.getElementById("app-subtitle").textContent.trim();
+    if (plain !== draftSubtitle) {
+      draftSubtitle = plain;
+      markTemplateDirty();
+    }
+  });
+
+  document.getElementById("restore-template").addEventListener("click", () => {
+    if (confirm("Restore this checklist to the original standard version? Your additions, removals and text changes in THIS checklist will be lost.")) {
+      TEMPLATE = withIds(DEFAULT_SECTIONS);
+      persistActiveTemplate();
+      render();
+    }
+  });
+
+  document.getElementById("save-checklist").addEventListener("click", () => {
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
+      document.activeElement.blur();
+    }
+    const current = activeEntry();
+    const aircraftType = prompt("Aircraft type:", (current && current.aircraftType) || "MD-80");
+    if (aircraftType === null || !aircraftType.trim()) return;
+    const name = prompt("Checklist name:", (current && current.name) || "Normal Checklist");
+    if (name === null || !name.trim()) return;
+    const suggestedVersion = current ? current.version : "1";
+    const versionInput = prompt("Version number:", String(suggestedVersion));
+    if (versionInput === null) return;
+    const version = versionInput.trim() || String(suggestedVersion);
+    const savedAt = new Date().toISOString();
+
+    const newEntry = {
+      id: "custom-" + Date.now(),
+      aircraftType: aircraftType.trim(),
+      name: name.trim(),
+      version: version,
+      title: draftTitle,
+      subtitle: draftSubtitle,
+      savedAt: savedAt,
+      sections: JSON.parse(JSON.stringify(TEMPLATE))
+    };
+    LIBRARY.push(newEntry);
+    saveLibrary(LIBRARY);
+
+    // Keep the current progress (checkmarks) on the newly saved version,
+    // since item ids are identical in the deep-copied template.
+    store.setItem(stateKeyFor(newEntry.id), JSON.stringify(state));
+
+    const payload = {
+      type: "md80-checklist-template",
+      aircraftType: newEntry.aircraftType,
+      name: newEntry.name,
+      version: newEntry.version,
+      title: newEntry.title,
+      subtitle: newEntry.subtitle,
+      savedAt: newEntry.savedAt,
+      sections: newEntry.sections
+    };
+    const filename = "checklist-" + newEntry.aircraftType.replace(/\s+/g, "_") + "-" + newEntry.name.replace(/\s+/g, "_") + "-v" + version.replace(/\s+/g, "_") + "-" + savedAt.slice(0, 10) + ".json";
+    downloadFile(filename, JSON.stringify(payload, null, 2), "application/json");
+
+    openChecklist(newEntry.id);
+  });
+
+  function restoreFullBackup(data) {
+    if (!confirm("Import backup from " + (data.exportedAt ? new Date(data.exportedAt).toLocaleString("en-GB") : "unknown time") + "? This overwrites ALL current data on this device (all checklists, all legs, all progress).")) {
+      return false;
+    }
+    migrateEnglishDefaults(data.library);
+    LIBRARY = data.library;
+    saveLibrary(LIBRARY);
+    saveFlights(data.flights || []);
+    if (data.states && typeof data.states === "object") {
+      Object.keys(data.states).forEach(id => {
+        store.setItem(stateKeyFor(id), JSON.stringify(data.states[id]));
+      });
+    } else if (data.activeId && data.activeState) {
+      // Backwards compatibility with older backup format
+      store.setItem(stateKeyFor(data.activeId), JSON.stringify(data.activeState));
+    }
+    store.setItem(LAST_BACKUP_KEY, new Date().toISOString());
+    showStartScreen();
+    return true;
+  }
+
+  document.getElementById("import-checklist-btn").addEventListener("click", () => {
+    document.getElementById("import-checklist-input").click();
+  });
+
+  document.getElementById("import-checklist-input").addEventListener("change", (e) => {
+    readImportFile(e.target, (data, file) => {
+      if (Array.isArray(data.library)) {
+        if (!data.library.length) { alert("\"" + file.name + "\" contains no checklists."); return; }
+        if (restoreFullBackup(data)) showNotice("✓ Backup imported: " + file.name);
+        return;
+      }
+      if (!Array.isArray(data.sections) || !data.sections.length) {
+        alert("\"" + file.name + "\" is valid JSON, but it is neither a checklist nor a full backup file.");
+        return;
+      }
+      const newEntry = {
+        id: "imported-" + Date.now(),
+        aircraftType: data.aircraftType || "Unknown",
+        name: data.name || "Imported checklist",
+        version: data.version || "1",
+        title: data.title || (data.aircraftType ? data.aircraftType + " Normal Checklist" : "Imported Checklist"),
+        subtitle: data.subtitle || "",
+        savedAt: data.savedAt || new Date().toISOString(),
+        sections: data.sections
+      };
+      LIBRARY.push(newEntry);
+      saveLibrary(LIBRARY);
+      renderStartScreen();
+      showNotice("✓ Checklist imported: " + file.name);
+    });
+  });
+
+  document.getElementById("turnaround").addEventListener("click", () => {
+    const nextLeg = getNextLegNumber(ACTIVE_ID);
+    const legInput = prompt("Leg no:", String(nextLeg));
+    if (legInput === null) return;
+    const label = "Leg " + (legInput.trim() || String(nextLeg));
+
+    const entry = activeEntry();
+    const flights = loadFlights();
+    flights.push({
+      id: Date.now(),
+      label: label,
+      aircraftType: entry ? entry.aircraftType : "",
+      savedAt: new Date().toISOString(),
+      snapshot: JSON.parse(JSON.stringify(state)),
+      stats: computeStats(state)
+    });
+    saveFlights(flights);
+    bumpLegNumber(ACTIVE_ID);
+
+    downloadFile(
+      "log-" + label.replace(/\s+/g, "_") + "-" + timestampForFilename() + ".txt",
+      formatLogText(state, label, new Date().toISOString()),
+      "text/plain"
+    );
+
+    TEMPLATE.forEach(section => {
+      section.items.forEach(item => {
+        if (item.transit) {
+          delete state[itemKey(section.id, item.id)];
+        }
+      });
+      delete state["sectiontime:" + section.id];
+    });
+    saveState(state);
+    render();
+    renderFlightsList();
+  });
+
+  document.getElementById("new-flight").addEventListener("click", () => {
+    const nextLeg = getNextLegNumber(ACTIVE_ID);
+    const legInput = prompt("Leg no:", String(nextLeg));
+    if (legInput === null) return;
+    const label = "Leg " + (legInput.trim() || String(nextLeg));
+    const entry = activeEntry();
+    const flights = loadFlights();
+    flights.push({
+      id: Date.now(),
+      label: label,
+      aircraftType: entry ? entry.aircraftType : "",
+      savedAt: new Date().toISOString(),
+      snapshot: JSON.parse(JSON.stringify(state)),
+      stats: computeStats(state)
+    });
+    saveFlights(flights);
+    resetLegNumber(ACTIVE_ID);
+    state = {};
+    saveState(state);
+    render();
+    renderFlightsList();
+  });
+
+  document.getElementById("export-log").addEventListener("click", () => {
+    const label = prompt("Name/number for the log file (optional):", "");
+    if (label === null) return;
+    downloadFile(
+      "log-" + timestampForFilename() + ".txt",
+      formatLogText(state, label.trim(), new Date().toISOString()),
+      "text/plain"
+    );
+  });
+
+  document.getElementById("export-backup").addEventListener("click", () => {
+    const backup = {
+      type: "md80-full-backup",
+      exportedAt: new Date().toISOString(),
+      library: LIBRARY,
+      states: loadAllStates(),
+      flights: loadFlights()
+    };
+    downloadFile("md80-backup-" + timestampForFilename() + ".json", JSON.stringify(backup, null, 2), "application/json");
+    store.setItem(LAST_BACKUP_KEY, new Date().toISOString());
+    updateBackupWarning();
+  });
+
+  document.getElementById("import-backup-btn").addEventListener("click", () => {
+    document.getElementById("import-backup-input").click();
+  });
+
+  document.getElementById("import-backup-input").addEventListener("change", (e) => {
+    readImportFile(e.target, (data, file) => {
+      if (!Array.isArray(data.library) || !data.library.length) {
+        alert("\"" + file.name + "\" is not a full backup file. To open a single checklist file, use \"Import checklist or backup from file\" on the start screen.");
+        return;
+      }
+      if (restoreFullBackup(data)) showNotice("✓ Backup imported: " + file.name);
+    });
+  });
+
+  document.getElementById("reset-all").addEventListener("click", () => {
+    if (confirm("Reset to a fresh start? The current progress is archived automatically under \"Leg\", so nothing is lost.")) {
+      const nextLeg = getNextLegNumber(ACTIVE_ID);
+      const entry = activeEntry();
+      const flights = loadFlights();
+      flights.push({
+        id: Date.now(),
+        label: "Leg " + nextLeg,
+        aircraftType: entry ? entry.aircraftType : "",
+        savedAt: new Date().toISOString(),
+        snapshot: JSON.parse(JSON.stringify(state)),
+        stats: computeStats(state)
+      });
+      saveFlights(flights);
+      resetLegNumber(ACTIVE_ID);
+      state = {};
+      saveState(state);
+      render();
+      renderFlightsList();
+    }
+  });
+
+  document.getElementById("expand-all").addEventListener("click", () => {
+    document.querySelectorAll("details").forEach(d => d.open = true);
+  });
+
+  document.getElementById("collapse-all").addEventListener("click", () => {
+    document.querySelectorAll("details").forEach(d => d.open = false);
+  });
+
+  window.addEventListener("beforeunload", (e) => {
+    if (templateDirty) {
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
+  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+  }
+  try {
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  } catch (e) {}
+
+  showStartScreen();
+</script>
+</body>
+</html>
